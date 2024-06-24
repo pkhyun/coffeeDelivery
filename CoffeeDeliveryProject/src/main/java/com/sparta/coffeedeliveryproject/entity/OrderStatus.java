@@ -1,7 +1,6 @@
 package com.sparta.coffeedeliveryproject.entity;
 
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 public enum OrderStatus {

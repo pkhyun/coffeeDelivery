@@ -19,7 +19,7 @@ public class CafeLikeService {
 
     //카페 좋아요
     @Transactional
-    public MessageResponseDto likeCafe(Long cafeId, User user){
+    public MessageResponseDto likeCafe(Long cafeId, User user) {
         Cafe cafe = findCafeById(cafeId);
 
         if (cafeLikeRepository.findByCafeCafeIdAndUserUserId(cafeId, user.getUserId()).isPresent()) {
@@ -33,7 +33,7 @@ public class CafeLikeService {
 
     //카페 좋아요 취소
     @Transactional
-    public MessageResponseDto unlikeCafe(Long cafeId, User user){
+    public MessageResponseDto unlikeCafe(Long cafeId, User user) {
         Cafe cafe = findCafeById(cafeId);
 
         CafeLike cafeLike = cafeLikeRepository.findByCafeCafeIdAndUserUserId(cafeId, user.getUserId()).orElseThrow(() ->

@@ -10,7 +10,7 @@ import java.util.List;
 @Getter
 @Table(name = "orders")
 @NoArgsConstructor
-public class Order extends TimeStamped{
+public class Order extends TimeStamped {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

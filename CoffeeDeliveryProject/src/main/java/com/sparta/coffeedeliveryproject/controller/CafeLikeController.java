@@ -1,7 +1,6 @@
 package com.sparta.coffeedeliveryproject.controller;
 
 import com.sparta.coffeedeliveryproject.dto.MessageResponseDto;
-import com.sparta.coffeedeliveryproject.entity.User;
 import com.sparta.coffeedeliveryproject.security.UserDetailsImpl;
 import com.sparta.coffeedeliveryproject.service.CafeLikeService;
 import lombok.RequiredArgsConstructor;

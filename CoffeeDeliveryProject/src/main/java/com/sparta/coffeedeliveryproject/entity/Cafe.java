@@ -52,11 +52,11 @@ public class Cafe {
     }
 
     public void likeCafe() {
-        this.cafeLikeCount ++;
+        this.cafeLikeCount++;
     }
 
     public void unlikeCafe() {
-        this.cafeLikeCount --;
+        this.cafeLikeCount--;
     }
 
 }

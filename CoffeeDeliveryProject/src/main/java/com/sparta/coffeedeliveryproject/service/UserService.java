@@ -58,7 +58,7 @@ public class UserService {
                 } else {
                     throw new IllegalArgumentException("adminToken이 올바르지 않습니다.");
                 }
-            }else if(signupRequestDto.getRole().equals("USER")) {
+            } else if (signupRequestDto.getRole().equals("USER")) {
                 UserRole userRole = findRole("USER");
                 userRoles.add(userRole);
             } else {
@@ -70,6 +70,8 @@ public class UserService {
         }
 
         user.setUserRoles(userRoles);
+        user.getPastPasswords().add(password);
+
 
         userRepository.save(user);
 
@@ -110,7 +112,7 @@ public class UserService {
 
         String refreshToken = jwtUtil.getTokenFromHeader(JwtUtil.REFRESH_HEADER, request);
 
-        if(!jwtUtil.validateToken(refreshToken)) {
+        if (!jwtUtil.validateToken(refreshToken)) {
             throw new IllegalArgumentException("리프레시 토큰도 만료되었습니다. 다시 로그인 해주세요.");
         }
 
@@ -119,7 +121,7 @@ public class UserService {
 
         User user = findUserByName(userName);
 
-        if(!refreshToken.equals(user.getRefreshToken())) {
+        if (!refreshToken.equals(user.getRefreshToken())) {
             throw new IllegalArgumentException("해당 유저의 리프레시 토큰이 일치하지 않습니다.");
         }
 

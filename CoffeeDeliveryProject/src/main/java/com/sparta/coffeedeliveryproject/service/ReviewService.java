@@ -24,7 +24,7 @@ public class ReviewService {
     private final CafeRepository cafeRepository;
     private final OrderRepository orderRepository;
 
-    public ReviewResponseDto createReview(Long cafeId, Long orderId, ReviewRequestDto requestDto, User user){
+    public ReviewResponseDto createReview(Long cafeId, Long orderId, ReviewRequestDto requestDto, User user) {
 
         Cafe cafe = findCafeById(cafeId);
         Order order = findOrderById(orderId);
@@ -47,10 +47,10 @@ public class ReviewService {
 
         Review review = findReviewById(reviewId);
 
-        if(review.getUser().getUserId() == user.getUserId()){
+        if (review.getUser().getUserId() == user.getUserId()) {
             review.update(requestDto);
             return new ReviewResponseDto(review);
-         }else throw new IllegalArgumentException("본인이 작성한 리뷰만 수정 가능합니다.");
+        } else throw new IllegalArgumentException("본인이 작성한 리뷰만 수정 가능합니다.");
 
     }
 
@@ -58,10 +58,10 @@ public class ReviewService {
 
         Review review = findReviewById(reviewId);
 
-        if(review.getUser().getUserId() == user.getUserId()){
+        if (review.getUser().getUserId() == user.getUserId()) {
             reviewRepository.delete(review);
             return ResponseEntity.ok("리뷰가 삭제되었습니다.");
-         }else throw new IllegalArgumentException("본인이 작성한 리뷰만 삭제 가능합니다.");
+        } else throw new IllegalArgumentException("본인이 작성한 리뷰만 삭제 가능합니다.");
 
     }
 

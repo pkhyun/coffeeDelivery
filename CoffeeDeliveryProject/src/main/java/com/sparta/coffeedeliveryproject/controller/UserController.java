@@ -30,7 +30,7 @@ public class UserController {
     public ResponseEntity<MessageResponseDto> login(@RequestBody LogingRequestDto logingRequestDto, HttpServletResponse response) {
 
         MessageResponseDto loginMessage = userService.login(logingRequestDto, response);
-        return  ResponseEntity.status(HttpStatus.OK).body(loginMessage);
+        return ResponseEntity.status(HttpStatus.OK).body(loginMessage);
     }
 
     @PutMapping("/profile")

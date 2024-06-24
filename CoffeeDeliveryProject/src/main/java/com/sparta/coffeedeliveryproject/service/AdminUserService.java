@@ -13,6 +13,7 @@ import com.sparta.coffeedeliveryproject.repository.UserRepository;
 import com.sparta.coffeedeliveryproject.repository.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 public class AdminUserService {
     private final UserRepository userRepository;
     private final UserRoleRepository userRoleRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<UserResponseDto> getAllUsers(Long adminUserId) {
         User user = findUserById(adminUserId);
@@ -48,45 +50,42 @@ public class AdminUserService {
 
         checkRole(adminUser);
 
-        if (userEditRequestDto.getNewUserName() != null) {
-            user.editUserName(user.getUserName());
-        }
-
         if (userEditRequestDto.getNewNickName() != null) {
             user.editUserNickName(userEditRequestDto.getNewNickName());
         }
 
         // 현재 비밀번호 확인
         if (userEditRequestDto.getPassword() != null) {
-            log.info(user.getPastPasswords().toString());
-
             // TODO: 나중에 password 암호화되면 encoder 추가 필요
             // 일치하지 않으면
-            if (!userEditRequestDto.getPassword().matches(user.getPassword())) {
+            if (!passwordEncoder.matches(userEditRequestDto.getPassword(), user.getPassword())) {
                 throw new PasswordMismatchException("현재 비밀번호가 일치하지 않습니다.");
             }
 
             // 이전 비밀번호에 새로운 비밀번호가 있으면
-            if (user.getPastPasswords().contains(userEditRequestDto.getNewPassword())) {
-                throw new RecentlyUsedPasswordException("최근 설정한 4개의 비밀번호로는 비밀번호를 변경하실 수 없습니다.");
+            for (String s : user.getPastPasswords()) {
+                if (passwordEncoder.matches(userEditRequestDto.getNewPassword(), s)) {
+                    throw new RecentlyUsedPasswordException("최근 설정한 4개의 비밀번호로는 비밀번호를 변경하실 수 없습니다.");
+                }
             }
 
             // 새로운 비밀번호 설정
-            user.editUserPassword(userEditRequestDto.getNewPassword());
+            user.editUserPassword(passwordEncoder.encode(userEditRequestDto.getNewPassword()));
 
             // 과거 비밀번호 저장하는 리스트의 갯수가 4개인지 확인
-            if (user.getPastPasswords().stream().count() == 4) {
+            if (user.getPastPasswords().size() >= 3) {
 
                 // 가장 먼저 저장된 password 삭제
                 user.getPastPasswords().remove(0);
 
                 // 새로운 비밀번호 저장
-                user.getPastPasswords().add(userEditRequestDto.getNewPassword());
+                user.getPastPasswords().add(passwordEncoder.encode(userEditRequestDto.getNewPassword()));
 
             } else {
-                user.getPastPasswords().add(userEditRequestDto.getNewPassword());
+                user.getPastPasswords().add(passwordEncoder.encode(userEditRequestDto.getNewPassword()));
             }
         }
+
 
         return new UserResponseDto(user);
     }
@@ -130,8 +129,8 @@ public class AdminUserService {
 
         checkRole(adminUser);
 
-        if(user.getUserStatus() == UserStatusEnum.BLOCK) {
-            throw  new IllegalArgumentException("이미 차단된 회원입니다.");
+        if (user.getUserStatus() == UserStatusEnum.BLOCK) {
+            throw new IllegalArgumentException("이미 차단된 회원입니다.");
         }
 
         user.setUserStatus(UserStatusEnum.BLOCK);

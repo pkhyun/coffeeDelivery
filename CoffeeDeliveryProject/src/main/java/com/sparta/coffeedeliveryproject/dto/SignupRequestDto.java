@@ -1,13 +1,10 @@
 package com.sparta.coffeedeliveryproject.dto;
 
-import com.sparta.coffeedeliveryproject.entity.UserRole;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.Set;
 
 @Getter
 @Setter
