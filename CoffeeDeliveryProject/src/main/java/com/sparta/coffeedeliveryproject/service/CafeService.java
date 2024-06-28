@@ -2,6 +2,7 @@ package com.sparta.coffeedeliveryproject.service;
 
 import com.sparta.coffeedeliveryproject.dto.CafeMenuListResponseDto;
 import com.sparta.coffeedeliveryproject.dto.CafeResponseDto;
+import com.sparta.coffeedeliveryproject.dto.MenuDto;
 import com.sparta.coffeedeliveryproject.dto.MenuResponseDto;
 import com.sparta.coffeedeliveryproject.entity.Cafe;
 import com.sparta.coffeedeliveryproject.entity.User;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -54,16 +56,27 @@ public class CafeService {
         return new CafeMenuListResponseDto(cafe, menuList);
     }
 
-    public List<CafeResponseDto> getFavoriteCafe(int page, String sortBy, User user) {
+    public List<MenuDto> getUserFavoriteCafe(int page, User user) {
 
-        Sort sort = Sort.by(Sort.Direction.ASC, sortBy);
-
-        Pageable pageable = PageRequest.of(page, 5, sort);
-        Page<CafeResponseDto> cafePage = cafeRepository.findFavoriteCafesByUserId(user.getUserId(), pageable).map(CafeResponseDto::new);
-        List<CafeResponseDto> responseDtoList = cafePage.getContent();
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(Direction.DESC, "createdAt"));
+        Page<MenuDto> cafePage = cafeRepository.findFavoriteCafesByUserId(user.getUserId(), pageable).map(MenuDto::new);
+        List<MenuDto> responseDtoList = cafePage.getContent();
 
         if (responseDtoList.isEmpty()) {
             throw new IllegalArgumentException("작성된 카페 페이지가 없거나, " + (page + 1) + " 페이지에 글이 없습니다.");
+        }
+
+        return responseDtoList;
+    }
+
+    public List<CafeResponseDto> getFavoriteCafe() {
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.by(Direction.DESC, "cafeLikeCount"));
+        Page<CafeResponseDto> cafePage = cafeRepository.findAll(pageable).map(CafeResponseDto::new);
+        List<CafeResponseDto> responseDtoList = cafePage.getContent();
+
+        if (responseDtoList.isEmpty()) {
+            throw new IllegalArgumentException("작성된 카페 페이지가 없습니다.");
         }
 
         return responseDtoList;
