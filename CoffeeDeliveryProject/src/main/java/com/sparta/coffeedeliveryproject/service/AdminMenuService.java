@@ -5,6 +5,7 @@ import com.sparta.coffeedeliveryproject.dto.MenuResponseDto;
 import com.sparta.coffeedeliveryproject.dto.MessageResponseDto;
 import com.sparta.coffeedeliveryproject.entity.Cafe;
 import com.sparta.coffeedeliveryproject.entity.Menu;
+import com.sparta.coffeedeliveryproject.entity.MenuType;
 import com.sparta.coffeedeliveryproject.entity.User;
 import com.sparta.coffeedeliveryproject.entity.UserRole;
 import com.sparta.coffeedeliveryproject.repository.CafeRepository;
@@ -31,7 +32,16 @@ public class AdminMenuService {
 
         String menuName = requestDto.getMenuName();
         Long menuPrice = requestDto.getMenuPrice();
-        Menu menu = new Menu(menuName, menuPrice, cafe);
+        MenuType menuType;
+
+        // menuType 유효성 검증
+        try {
+            menuType = MenuType.valueOf(requestDto.getMenuType().toUpperCase()); // 대소문자 구분 없이 처리
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("유효하지 않은 메뉴 타입입니다.");
+        }
+
+        Menu menu = new Menu(menuName, menuPrice, cafe, menuType);
         cafe.addMenuList(menu);
 
         Menu saveMenu = menuRepository.save(menu);

@@ -24,10 +24,15 @@ public class Menu {
     @JoinColumn(name = "cafe_id", nullable = false)
     private Cafe cafe;
 
-    public Menu(String menuName, Long menuPrice, Cafe cafe) {
+    @Column(nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private MenuType menuType;
+
+    public Menu(String menuName, Long menuPrice, Cafe cafe, MenuType menuType) {
         this.menuName = menuName;
         this.menuPrice = menuPrice;
         this.cafe = cafe;
+        this.menuType = menuType;
     }
 
 }
