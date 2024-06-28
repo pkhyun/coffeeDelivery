@@ -1,6 +1,7 @@
 package com.sparta.coffeedeliveryproject.dto;
 
 import com.sparta.coffeedeliveryproject.entity.Menu;
+import com.sparta.coffeedeliveryproject.entity.MenuType;
 import lombok.Getter;
 
 @Getter
@@ -10,12 +11,14 @@ public class MenuDto {
     private String menuName;
     private Long menuPrice;
     private String cafeName;
+    private MenuType menuType;
 
     public MenuDto(Menu menu) {
         this.menuId = menu.getMenuId();
         this.menuName = menu.getMenuName();
         this.menuPrice = menu.getMenuPrice();
         this.cafeName = menu.getCafe().getCafeName();
+        this.menuType = menu.getMenuType();
     }
 
 }

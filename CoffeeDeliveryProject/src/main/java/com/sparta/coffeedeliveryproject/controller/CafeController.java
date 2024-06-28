@@ -3,6 +3,8 @@ package com.sparta.coffeedeliveryproject.controller;
 import com.sparta.coffeedeliveryproject.dto.CafeMenuListResponseDto;
 import com.sparta.coffeedeliveryproject.dto.CafeResponseDto;
 import com.sparta.coffeedeliveryproject.dto.MenuDto;
+import com.sparta.coffeedeliveryproject.dto.MenuSearchCond;
+import com.sparta.coffeedeliveryproject.entity.MenuType;
 import com.sparta.coffeedeliveryproject.security.UserDetailsImpl;
 import com.sparta.coffeedeliveryproject.service.CafeService;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +47,8 @@ public class CafeController {
         @RequestParam(value = "page", defaultValue = "1") int page,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        List<MenuDto> responseDtoList = cafeService.getUserFavoriteCafe(page - 1, userDetails.getUser());
+
+        List<MenuDto> responseDtoList = cafeService.getUserFavoriteCafe(page - 1, userDetails.getUser()/*, searchCond*/);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }

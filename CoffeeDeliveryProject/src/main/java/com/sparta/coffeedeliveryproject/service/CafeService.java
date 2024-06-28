@@ -4,6 +4,7 @@ import com.sparta.coffeedeliveryproject.dto.CafeMenuListResponseDto;
 import com.sparta.coffeedeliveryproject.dto.CafeResponseDto;
 import com.sparta.coffeedeliveryproject.dto.MenuDto;
 import com.sparta.coffeedeliveryproject.dto.MenuResponseDto;
+import com.sparta.coffeedeliveryproject.dto.MenuSearchCond;
 import com.sparta.coffeedeliveryproject.entity.Cafe;
 import com.sparta.coffeedeliveryproject.entity.User;
 import com.sparta.coffeedeliveryproject.repository.CafeLikeRepository;
@@ -56,10 +57,20 @@ public class CafeService {
         return new CafeMenuListResponseDto(cafe, menuList);
     }
 
-    public List<MenuDto> getUserFavoriteCafe(int page, User user) {
+    public List<MenuDto> getUserFavoriteCafe(int page, User user/*, MenuSearchCond searchCond*/) {
 
         Pageable pageable = PageRequest.of(page, 5, Sort.by(Direction.DESC, "createdAt"));
         Page<MenuDto> cafePage = cafeRepository.findFavoriteCafesByUserId(user.getUserId(), pageable).map(MenuDto::new);
+        // 필터 조건에 따라 쿼리를 다르게 구성
+//        Page<MenuDto> cafePage;
+//        if (searchCond != null && (searchCond.getMenuType() != null || searchCond.getMinPrice() != null || searchCond.getMaxPrice() != null)) {
+//            cafePage = cafeRepository.findFavoriteCafesByUserIdWithFilters(user.getUserId(), searchCond.getMenuType(), searchCond.getMinPrice(), searchCond.getMaxPrice(), pageable)
+//                .map(MenuDto::new);
+//        } else {
+//            cafePage = cafeRepository.findFavoriteCafesByUserId(user.getUserId(), pageable)
+//                .map(MenuDto::new);
+//        }
+
         List<MenuDto> responseDtoList = cafePage.getContent();
 
         if (responseDtoList.isEmpty()) {
