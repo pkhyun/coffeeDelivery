@@ -1,5 +1,6 @@
 package com.sparta.coffeedeliveryproject.service;
 
+import com.sparta.coffeedeliveryproject.dto.CafeResponseDto;
 import com.sparta.coffeedeliveryproject.dto.ReviewRequestDto;
 import com.sparta.coffeedeliveryproject.dto.ReviewResponseDto;
 import com.sparta.coffeedeliveryproject.entity.Cafe;
@@ -10,6 +11,11 @@ import com.sparta.coffeedeliveryproject.repository.CafeRepository;
 import com.sparta.coffeedeliveryproject.repository.OrderRepository;
 import com.sparta.coffeedeliveryproject.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -84,6 +90,19 @@ public class ReviewService {
         return cafeRepository.findById(cafeId).orElseThrow(() ->
                 new IllegalArgumentException("해당 카페를 찾을 수 없습니다."));
 
+    }
+
+    public List<ReviewResponseDto> getUserFavoriteReviews(int page, User user) {
+
+        Pageable pageable = PageRequest.of(page, 5, Sort.by(Direction.DESC, "createdAt"));
+        Page<ReviewResponseDto> reviewPage = reviewRepository.findFavoriteReviewsByUserId(user.getUserId(), pageable).map(ReviewResponseDto::new);
+        List<ReviewResponseDto> responseDtoList = reviewPage.getContent();
+
+        if (responseDtoList.isEmpty()) {
+            throw new IllegalArgumentException("작성된 리뷰가 없거나, " + (page + 1) + " 페이지에 리뷰가 없습니다.");
+        }
+
+        return responseDtoList;
     }
 
 }
