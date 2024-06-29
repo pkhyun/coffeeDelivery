@@ -45,10 +45,14 @@ public class CafeController {
     @GetMapping("/users/favorite")
     public ResponseEntity<List<MenuDto>> getUserFavoriteCafe(
         @RequestParam(value = "page", defaultValue = "1") int page,
+        @RequestParam(value = "menuType", required = false) MenuType menuType,
+        @RequestParam(value = "minPrice", required = false) Long minPrice,
+        @RequestParam(value = "maxPrice", required = false) Long maxPrice,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
+        MenuSearchCond searchCond = new MenuSearchCond(menuType, minPrice, maxPrice);
 
-        List<MenuDto> responseDtoList = cafeService.getUserFavoriteCafe(page - 1, userDetails.getUser()/*, searchCond*/);
+        List<MenuDto> responseDtoList = cafeService.getUserFavoriteCafe(page - 1, userDetails.getUser(), searchCond);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }

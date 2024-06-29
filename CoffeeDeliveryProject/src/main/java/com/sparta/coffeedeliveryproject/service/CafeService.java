@@ -6,6 +6,7 @@ import com.sparta.coffeedeliveryproject.dto.MenuDto;
 import com.sparta.coffeedeliveryproject.dto.MenuResponseDto;
 import com.sparta.coffeedeliveryproject.dto.MenuSearchCond;
 import com.sparta.coffeedeliveryproject.entity.Cafe;
+import com.sparta.coffeedeliveryproject.entity.Menu;
 import com.sparta.coffeedeliveryproject.entity.User;
 import com.sparta.coffeedeliveryproject.repository.CafeLikeRepository;
 import com.sparta.coffeedeliveryproject.repository.CafeRepository;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -57,22 +59,22 @@ public class CafeService {
         return new CafeMenuListResponseDto(cafe, menuList);
     }
 
-    public List<MenuDto> getUserFavoriteCafe(int page, User user/*, MenuSearchCond searchCond*/) {
+    public List<MenuDto> getUserFavoriteCafe(int page, User user, MenuSearchCond searchCond) {
 
         Pageable pageable = PageRequest.of(page, 5, Sort.by(Direction.DESC, "createdAt"));
-        Page<MenuDto> cafePage = cafeRepository.findFavoriteCafesByUserId(user.getUserId(), pageable).map(MenuDto::new);
-        // 필터 조건에 따라 쿼리를 다르게 구성
-//        Page<MenuDto> cafePage;
-//        if (searchCond != null && (searchCond.getMenuType() != null || searchCond.getMinPrice() != null || searchCond.getMaxPrice() != null)) {
-//            cafePage = cafeRepository.findFavoriteCafesByUserIdWithFilters(user.getUserId(), searchCond.getMenuType(), searchCond.getMinPrice(), searchCond.getMaxPrice(), pageable)
-//                .map(MenuDto::new);
-//        } else {
-//            cafePage = cafeRepository.findFavoriteCafesByUserId(user.getUserId(), pageable)
-//                .map(MenuDto::new);
-//        }
+//        Page<MenuDto> cafePage = cafeRepository.findFavoriteCafesByUserId(user.getUserId(), pageable).map(MenuDto::new);
+//        List<MenuDto> responseDtoList = cafePage.getContent();
 
-        List<MenuDto> responseDtoList = cafePage.getContent();
+        Page<Menu> cafePage = cafeRepository.findFavoriteCafesByUserIdWithSearch(
+                user.getUserId(),
+                searchCond.getMenuType(),
+                searchCond.getMinPrice(),
+                searchCond.getMaxPrice(),
+                pageable);
 
+        List<MenuDto> responseDtoList = cafePage.stream()
+                .map(MenuDto::new)
+                .collect(Collectors.toList());
         if (responseDtoList.isEmpty()) {
             throw new IllegalArgumentException("작성된 카페 페이지가 없거나, " + (page + 1) + " 페이지에 글이 없습니다.");
         }
