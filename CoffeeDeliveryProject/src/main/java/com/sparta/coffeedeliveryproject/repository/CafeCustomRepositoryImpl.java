@@ -45,7 +45,7 @@ public class CafeCustomRepositoryImpl implements CafeCustomRepository {
             builder.and(menu.menuPrice.loe(maxPrice));
         }
 
-        QueryResults<MenuDto> results = jpaQueryFactory
+        List<MenuDto> menuList = jpaQueryFactory
                 .select(Projections.constructor(MenuDto.class,
                         menu.menuId,
                         menu.menuName,
@@ -59,11 +59,9 @@ public class CafeCustomRepositoryImpl implements CafeCustomRepository {
                 .where(builder)
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
-                .fetchResults();
+                .fetch();
 
-        List<MenuDto> menuList = results.getResults();
-
-        return new PageImpl<>(menuList, pageable, results.getTotal());
+        return new PageImpl<>(menuList, pageable, menuList.size());
 
     }
 
