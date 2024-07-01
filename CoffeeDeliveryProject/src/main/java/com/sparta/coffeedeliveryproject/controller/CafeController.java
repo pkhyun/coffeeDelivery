@@ -8,6 +8,7 @@ import com.sparta.coffeedeliveryproject.entity.MenuType;
 import com.sparta.coffeedeliveryproject.security.UserDetailsImpl;
 import com.sparta.coffeedeliveryproject.service.CafeService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -23,11 +24,11 @@ public class CafeController {
     private final CafeService cafeService;
 
     @GetMapping
-    public ResponseEntity<List<CafeResponseDto>> getAllCafe(
+    public ResponseEntity<Page<CafeResponseDto>> getAllCafe(
         @RequestParam(value = "page", defaultValue = "1") int page,
         @RequestParam(value = "sortBy", defaultValue = "cafeId") String sortBy) {
 
-        List<CafeResponseDto> responseDtoList = cafeService.getAllCafe(page - 1, sortBy);
+        Page<CafeResponseDto> responseDtoList = cafeService.getAllCafe(page - 1, sortBy);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }
@@ -43,7 +44,7 @@ public class CafeController {
 
     //팔로워 게시글 목록 조회기능 추가 (본인이 좋아요한 카페의 메뉴 조회)
     @GetMapping("/users/favorite")
-    public ResponseEntity<List<MenuDto>> getUserFavoriteCafe(
+    public ResponseEntity<Page<MenuDto>> getUserFavoriteCafe(
         @RequestParam(value = "page", defaultValue = "1") int page,
         @RequestParam(value = "menuType", required = false) MenuType menuType,
         @RequestParam(value = "minPrice", required = false) Long minPrice,
@@ -52,16 +53,16 @@ public class CafeController {
 
         MenuSearchCond searchCond = new MenuSearchCond(menuType, minPrice, maxPrice);
 
-        List<MenuDto> responseDtoList = cafeService.getUserFavoriteCafe(page - 1, userDetails.getUser(), searchCond);
+        Page<MenuDto> responseDtoList = cafeService.getUserFavoriteCafe(page - 1, userDetails.getUser(), searchCond);
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }
 
     //팔로워 TOP 10 목록 조회기능 추가 (좋아요 많은순 TOP10 카페 조회)
     @GetMapping("/favorite")
-    public ResponseEntity<List<CafeResponseDto>> getFavoriteCafe(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+    public ResponseEntity<Page<CafeResponseDto>> getFavoriteCafe(@AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        List<CafeResponseDto> responseDtoList = cafeService.getFavoriteCafe();
+        Page<CafeResponseDto> responseDtoList = cafeService.getFavoriteCafe();
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }

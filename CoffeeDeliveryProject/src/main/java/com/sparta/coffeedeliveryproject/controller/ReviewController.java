@@ -6,6 +6,7 @@ import com.sparta.coffeedeliveryproject.security.UserDetailsImpl;
 import com.sparta.coffeedeliveryproject.service.ReviewService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -52,11 +53,11 @@ public class ReviewController {
 
     //자신이 좋아요한 댓글 보기
     @GetMapping("/reviews/users/favorite")
-    public ResponseEntity<List<ReviewResponseDto>> getUserFavoriteReviews(
+    public ResponseEntity<Page<ReviewResponseDto>> getUserFavoriteReviews(
         @RequestParam(value = "page", defaultValue = "1") int page,
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
-        List<ReviewResponseDto> responseDtoList = reviewService.getUserFavoriteReviews(page - 1, userDetails.getUser());
+        Page<ReviewResponseDto> responseDtoList = reviewService.getUserFavoriteReviews(page - 1, userDetails.getUser());
 
         return ResponseEntity.status(HttpStatus.OK).body(responseDtoList);
     }

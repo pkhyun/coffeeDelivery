@@ -20,7 +20,7 @@ public class CafeService {
 
     private final CafeRepository cafeRepository;
 
-    public List<CafeResponseDto> getAllCafe(int page, String sortBy) {
+    public Page<CafeResponseDto> getAllCafe(int page, String sortBy) {
 
         Sort sort;
 
@@ -32,13 +32,11 @@ public class CafeService {
 
         Pageable pageable = PageRequest.of(page, 5, sort);
         Page<CafeResponseDto> CafePage = cafeRepository.findAll(pageable).map(CafeResponseDto::new);
-        List<CafeResponseDto> responseDtoList = CafePage.getContent();
-
-        if (responseDtoList.isEmpty()) {
+        if (CafePage.isEmpty()) {
             throw new IllegalArgumentException("작성된 카페 페이지가 없거나, 입력된 " + (page + 1) + " 페이지에 글이 없습니다.");
         }
 
-        return responseDtoList;
+        return CafePage;
     }
 
     public CafeMenuListResponseDto getCafeWithMenuList(Long cafeId) {
@@ -52,7 +50,7 @@ public class CafeService {
         return new CafeMenuListResponseDto(cafe, menuList);
     }
 
-    public List<MenuDto> getUserFavoriteCafe(int page, User user, MenuSearchCond searchCond) {
+    public Page<MenuDto> getUserFavoriteCafe(int page, User user, MenuSearchCond searchCond) {
 
         Pageable pageable = PageRequest.of(page, 5, Sort.by(Direction.DESC, "createdAt"));
 
@@ -67,22 +65,19 @@ public class CafeService {
             throw new IllegalArgumentException("작성된 카페 페이지가 없거나, " + (page + 1) + " 페이지에 글이 없습니다.");
         }
 
-        List<MenuDto> responseDtoList = cafePage.getContent();
-
-        return responseDtoList;
+        return cafePage;
     }
 
-    public List<CafeResponseDto> getFavoriteCafe() {
+    public Page<CafeResponseDto> getFavoriteCafe() {
 
         Pageable pageable = PageRequest.of(0, 10, Sort.by(Direction.DESC, "cafeLikeCount"));
         Page<CafeResponseDto> cafePage = cafeRepository.findAll(pageable).map(CafeResponseDto::new);
-        List<CafeResponseDto> responseDtoList = cafePage.getContent();
 
-        if (responseDtoList.isEmpty()) {
+        if (cafePage.isEmpty()) {
             throw new IllegalArgumentException("작성된 카페 페이지가 없습니다.");
         }
 
-        return responseDtoList;
+        return cafePage;
     }
 
 }

@@ -92,17 +92,16 @@ public class ReviewService {
 
     }
 
-    public List<ReviewResponseDto> getUserFavoriteReviews(int page, User user) {
+    public Page<ReviewResponseDto> getUserFavoriteReviews(int page, User user) {
 
         Pageable pageable = PageRequest.of(page, 5, Sort.by(Direction.DESC, "createdAt"));
         Page<ReviewResponseDto> reviewPage = reviewRepository.findFavoriteReviewsByUserId(user.getUserId(), pageable).map(ReviewResponseDto::new);
-        List<ReviewResponseDto> responseDtoList = reviewPage.getContent();
 
-        if (responseDtoList.isEmpty()) {
+        if (reviewPage.isEmpty()) {
             throw new IllegalArgumentException("작성된 리뷰가 없거나, " + (page + 1) + " 페이지에 리뷰가 없습니다.");
         }
 
-        return responseDtoList;
+        return reviewPage;
     }
 
 }
