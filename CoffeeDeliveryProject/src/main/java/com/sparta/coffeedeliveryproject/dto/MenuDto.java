@@ -21,4 +21,12 @@ public class MenuDto {
         this.menuType = menu.getMenuType();
     }
 
+    public MenuDto(Long menuId, String menuName, Long menuPrice, String cafeName, MenuType menuType) {
+        this.menuId = menuId;
+        this.menuName = menuName;
+        this.menuPrice = menuPrice;
+        this.cafeName = cafeName;
+        this.menuType = menuType;
+    }
+
 }
