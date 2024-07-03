@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 
 @SpringBootApplication
-@EnableJpaAuditing
 public class CoffeeDeliveryProjectApplication {
 
 	public static void main(String[] args) {
